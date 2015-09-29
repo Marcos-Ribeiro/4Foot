@@ -12,7 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import br.com.fourtech.fourfoot.model.Jogador;
+import br.com.fourtech.fourfoot.model.Usuario;
 import br.com.fourtech.fourfoot.server.JSONServer;
 
 public class LoginActivity extends Activity{
@@ -20,6 +20,7 @@ public class LoginActivity extends Activity{
 	private EditText edtLogin;
 	private EditText edtSenha;
 	private Button btnLogin;
+	private Button btnCadastre_se;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,32 +33,48 @@ public class LoginActivity extends Activity{
 		edtLogin = (EditText) findViewById(R.id.edtLogin);
 		edtSenha = (EditText) findViewById(R.id.edtSenha);
 		btnLogin = (Button) findViewById(R.id.btnLogin);
+		btnCadastre_se = (Button) findViewById(R.id.btnCadastre_se);
+		
+		edtLogin.setText("marcos");
+		edtSenha.setText("123");
 
 		btnLogin.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				JSONObject jRetorno = wsConnection("http://10.0.2.2:8080/4footserver/login/Marcos/123");
+				String login = edtLogin.getText().toString();
+				String senha = edtSenha.getText().toString();
 				
-				Jogador jogadorLogado = new Jogador();
-								
-				try {
-					
-					jogadorLogado.setIdJogador(jRetorno.getLong("idJogador"));
-					jogadorLogado.setNome(jRetorno.getString("nome"));
-					jogadorLogado.setSenha(jRetorno.getString("senha"));
-					jogadorLogado.setPosicao(jRetorno.getString("posicao"));
-					jogadorLogado.setDataNascimento(jRetorno.getString("dataNascimento"));
-					
-				} catch (JSONException e) {
-					Toast.makeText(LoginActivity.this, e.getMessage().replace("\"", "") , 1000).show();
-				}
+				JSONObject jRetorno = wsConnection(Config.URL + "login/" + login + "/" + senha);
+				
+				Usuario usuarioLogado = new Usuario();
 				
 				if (jRetorno != null) {
+					try {
+						usuarioLogado.setIdUsuario(jRetorno.getLong("idusuario"));
+						usuarioLogado.setNome(jRetorno.getString("nome"));
+						usuarioLogado.setSenha(jRetorno.getString("senha"));
+						
+					} catch (JSONException e) {
+						Toast.makeText(LoginActivity.this, e.getMessage().replace("\"", "") , Toast.LENGTH_LONG).show();
+					}
+				
+					Config.USUARIO_LOGADO = usuarioLogado;
+					
 					Intent i = new Intent(LoginActivity.this, PrincipalActivity.class);
 					startActivity(i);
-					//Toast.makeText(LoginActivity.this, "Login e/ou Senha inválido", LENGTH_LONG);
-				} 
-				Toast.makeText(LoginActivity.this, "Login e/ou Senha inválido", 1000).show();
+					finish();
+
+				}else{ 
+					Toast.makeText(LoginActivity.this, "Login e/ou Senha inválido", Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+		
+		btnCadastre_se.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent ir = new Intent(LoginActivity.this, Cadastre_seActivity.class);
+				startActivity(ir);
 			}
 		});
 	}

@@ -61,7 +61,6 @@ public class JSONServer {
         InputStream is;
         try{
             StringEntity entity = new StringEntity(json);
-            //entity.setContentEncoding(HTTP.ISO_8859_1);
             entity.setContentEncoding(HTTP.UTF_8);
             entity.setContentType("application/json");
 
@@ -180,11 +179,12 @@ public class JSONServer {
         {
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(url);
-
             HttpResponse httpResponse = httpClient.execute(httpGet);
             HttpEntity httpEntity = httpResponse.getEntity();
             is = httpEntity.getContent();
+            
             return is;
+            
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;

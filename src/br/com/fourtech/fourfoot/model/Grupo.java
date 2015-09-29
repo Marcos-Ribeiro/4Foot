@@ -1,7 +1,13 @@
 package br.com.fourtech.fourfoot.model;
 
-public class Grupo {
+import java.io.Serializable;
 
+public class Grupo implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long idGrupo;
 	private String nome;
 	
